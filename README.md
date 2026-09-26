@@ -93,12 +93,12 @@ $$
 $S$ is a linear functional of a Gaussian path, so it is exactly Gaussian. With $\tau$ seconds to close, $I$ the part of the integral already observed (LOCF over delivered oracle ticks) and $\hat m$ the nowcast of $x$ now:
 
 $$
-\mathbb{E}[S] = \begin{cases} I + \hat m\,\tau, & \tau \le W \\[2pt] \hat m\,W, & \tau > W \end{cases}
+\mathbb{E}[S] = \begin{cases} I + \hat m\,\tau, & \tau \le W \\ \hat m\,W, & \tau > W \end{cases}
 \qquad\qquad
-\operatorname{Var}[S] = \begin{cases} \sigma^2\tau^3/3, & \tau \le W \\[2pt] W^2\sigma^2\,(\tau - \tfrac{2W}{3}), & \tau > W \end{cases}
+\mathrm{Var}[S] = \begin{cases} \sigma^2\tau^3/3, & \tau \le W \\ W^2\sigma^2\,(\tau - \tfrac{2W}{3}), & \tau > W \end{cases}
 $$
 
-The first branch is the Asian-option variance $\operatorname{Var}\!\left[\int_0^\tau B_u\,du\right] = \sigma^2\tau^3/3$; the second is the forward-starting case, a common shift over $\tau - W$ plus the in-window averaging. Both meet at $\tau = W$. Monte Carlo ratio to theory: 0.993 and 0.994.
+The first branch is the Asian-option variance $\mathrm{Var}\!\left[\int_0^\tau B_u\,du\right] = \sigma^2\tau^3/3$; the second is the forward-starting case, a common shift over $\tau - W$ plus the in-window averaging. Both meet at $\tau = W$. Monte Carlo ratio to theory: 0.993 and 0.994.
 
 ![](figures/twap_variance.png)
 
@@ -109,7 +109,7 @@ Inside the window uncertainty dies cubically: at $\tau = W/2$ only 12.5% of the 
 At $|z| \ge 2.6$ the sign was never wrong at any checkpoint, from 65 s out down to 2 s. Every error sits in the small-z windows, where the book is priced near 0.5 anyway.
 
 $$
-\text{fair}_{\text{up}} = \Phi\!\left(\frac{\mathbb{E}[S]}{\sqrt{\operatorname{Var}[S] + \big(b\cdot\max(\min(\tau,W),\,3)\big)^2 + (b_I\,W)^2}}\right),\qquad b = 0.3\ \text{bps},\quad b_I = 0.05\ \text{bps}
+\text{fair}_{\text{up}} = \Phi\!\left(\frac{\mathbb{E}[S]}{\sqrt{\mathrm{Var}[S] + \big(b\cdot\max(\min(\tau,W),\,3)\big)^2 + (b_I\,W)^2}}\right),\qquad b = 0.3\ \text{bps},\quad b_I = 0.05\ \text{bps}
 $$
 
 The noise term follows how each error enters the score: the nowcast error $b$ enters with weight $\tau$ (capped at $W$), the integral's own error $b_I$ is the measured print-reconstruction noise over the whole window. A constant floor $b\cdot W$ mispriced both ends of the window, too loose early and blind to genuinely locked windows late. Journal replay of 25,549 snapshots at the same 5¢ margin: the τ-scaled floor moved entries into the late zone (5–20 s: 42 → 67 entries, win rate 0.56–0.64 → 0.72–0.73), total 412 → 437 entries at 71.1% → 72.8%.
@@ -157,7 +157,7 @@ Unit test: a 50σ jump inflates the $r^2$-EWMA 85×, the bipower one 7.8×, deca
 **Flip probability, closed form.** The strike is the open print and the settlement mean runs over the last $W$ seconds of a $T$-second window. For Brownian motion the window mean $M$ and the endpoint $X$ are jointly Gaussian with
 
 $$
-\rho = \operatorname{corr}(M, X) = \frac{T - W/2}{\sqrt{T\,(T - 2W/3)}},\qquad P(\text{TWAP} \ne \text{last tick}) = \frac{\arccos\rho}{\pi}
+\rho = \mathrm{corr}(M, X) = \frac{T - W/2}{\sqrt{T\,(T - 2W/3)}},\qquad P(\text{TWAP} \ne \text{last tick}) = \frac{\arccos\rho}{\pi}
 $$
 
 With $T = 300$: 5.8% at $W = 30$, 8.2% at $W = 60$. The limit $W = T$ gives the textbook $\arccos(\sqrt3/2)/\pi = 1/6$; the PDF quotes that limit, and it is the wrong regime for this market. Measured on the 1,510 windows above ($W = 30$): 5.6%. Conditional on the final margin the flips sit where the mean is small. The data follow the Brownian curve up to about two standard deviations and sit above it beyond: 4% of flips at z ≈ 2.5, 3% at 3.5, 1% at 5, where a diffusion gives none. That tail is a reversing jump, and it is what the jump cap above is for:
