@@ -2,7 +2,7 @@
 
 Jul–Sep 2026. Seven coins (BTC, ETH, SOL, XRP, DOGE, BNB, HYPE), "Up or Down" markets on 5- and 15-minute windows, settled on Chainlink Data Streams. Two tokens per market, the winner pays \$1. Taker fee 0.07·p(1−p) per share (1.75¢ at p = 0.5); makers get 20% of the fee pool back as a rebate.
 
-In those three months the venue changed the rules under me twice: settlement went from the last oracle tick to a TWAP (Aug 7), and the taker delay went 250 ms → 50 ms → 150 ms. Each change killed one bot and made the next one. This is the write-up: the models, the numbers, and why the retail edge here is structurally small. No trading code, only the math and the measurements. Derivations are in [docs/twap_math.pdf](docs/twap_math.pdf).
+In those three months the venue changed the rules under me twice: settlement went from the last oracle tick to a TWAP (Aug 7), and the taker delay went 250 ms → 50 ms → 150 ms. Each change killed one bot and made the next one. This is the write-up: the models, the numbers, and why the retail edge here is structurally small. No trading code, only the math and the measurements. 
 
 ## 1. Last-tick era: a taker sniper
 
